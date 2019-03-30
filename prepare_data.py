@@ -53,3 +53,20 @@ states = [
     State('Wisconsin', 'Madison', 10),
     State('Wyoming', 'Cheyenne', 3),
 ]
+
+#
+# COORDINATES
+#
+
+print('Loading states capitals coordinates...')
+
+for state in states:
+    state.get_coordinates()
+
+#
+# SERIALIZING
+#
+
+print('Serializing and saving states to a binary file...')
+
+State.save(states)

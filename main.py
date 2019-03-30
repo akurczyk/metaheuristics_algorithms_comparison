@@ -1,5 +1,4 @@
 import click
-from data import states
 from classes import State
 from random_search import RandomSearch
 from tabu_search import TabuSearch
@@ -15,7 +14,10 @@ def dec_support(value, time):
     return max(value * 0.99994 ** time, 0)
 
 
-def print_loaded_states():
+def load_states():
+    global states
+    states = State.load()
+
     print('All loaded states with coordinates downloaded from OpenStreetMap:')
     State.print_states(states)
     print()
@@ -98,7 +100,7 @@ def benchmark():
 @click.option('--critical_event', default=20, type=int)
 @click.option('--population_size', default=20, type=int)
 def command(action, repeats, initial_cadence, critical_event, population_size):
-    print_loaded_states()
+    load_states()
 
     if action == 'rs':
         run_random_search(repeats)

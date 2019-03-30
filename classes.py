@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 import requests
 import geopy.distance
+import pickle
 import random
 import math
 
@@ -14,7 +15,6 @@ class State:
         self.capital = capital
         self.electoral_votes = electoral_votes
         self.coordinates = None
-        self.get_coordinates()
 
     def __str__(self):
         return self.name + '; ' + self.capital + '; ' + str(self.electoral_votes) + '; ' + str(self.coordinates)
@@ -34,6 +34,19 @@ class State:
             ])
 
         print(table)
+
+    @staticmethod
+    def save(states):
+        file = open('states.bin', mode='wb')
+        pickle.dump(states, file)
+        file.close()
+
+    @staticmethod
+    def load():
+        file = open('states.bin', mode='rb')
+        states = pickle.load(file)
+        file.close()
+        return states
 
     def get_coordinates(self):
         query = self.capital + ' ' + self.name

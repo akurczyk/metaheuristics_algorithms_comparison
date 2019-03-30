@@ -1,5 +1,5 @@
 from classes import Route
-from data import states
+from prepare_data import states
 import random
 
 
