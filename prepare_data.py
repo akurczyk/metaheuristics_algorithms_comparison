@@ -1,4 +1,4 @@
-from classes import State
+from state import State
 
 states = [
     State('Alabama', 'Montgomery', 9),
@@ -54,19 +54,9 @@ states = [
     State('Wyoming', 'Cheyenne', 3),
 ]
 
-#
-# COORDINATES
-#
-
 print('Loading states capitals coordinates...')
-
 for state in states:
     state.get_coordinates()
 
-#
-# SERIALIZING
-#
-
 print('Serializing and saving states to a binary file...')
-
 State.save(states)
