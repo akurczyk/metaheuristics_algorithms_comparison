@@ -2,6 +2,8 @@ import click
 from state import State
 from random_search import RandomSearch
 from genetic_algorithm import GeneticAlgorithm
+from tabu_search import TabuSearch
+from simulated_annealing import SimulatedAnnealing
 from datetime import datetime
 
 
@@ -28,7 +30,8 @@ def run_random_search(repeats):
 
     rs = RandomSearch(states, repeats, inc_support, dec_support)
     rs.run()
-    print('Found optimal route with value of ' + str(rs.best_solution.value) + ' electoral votes:')
+    print('Found optimal route with value of ' + str(rs.best_solution.value) + '.')
+    print(str(rs.best_solution.calculate_real_value()) + ' electoral votes were collected.')
     rs.best_solution.print()
     print()
 
@@ -37,10 +40,35 @@ def run_genetic_algorithm(repeats, population_size):
     print('Running Genetic Algorithm with ' + str(repeats) + ' repeats...')
     print()
 
-    ts = GeneticAlgorithm(states, repeats, population_size, inc_support, dec_support)
+    ga = GeneticAlgorithm(states, repeats, population_size, inc_support, dec_support)
+    ga.run()
+    print('Found optimal route with value of ' + str(ga.best_solution.value) + '.')
+    print(str(ga.best_solution.calculate_real_value()) + ' electoral votes were collected.')
+    ga.best_solution.print()
+    print()
+
+
+def run_tabu_search(repeats, initial_cadence, critical_event):
+    print('Running Tabu Search with ' + str(repeats) + ' repeats...')
+    print()
+
+    ts = TabuSearch(states, repeats, initial_cadence, critical_event, inc_support, dec_support)
     ts.run()
-    print('Found optimal route with value of ' + str(ts.best_solution.value) + ' electoral votes:')
+    print('Found optimal route with value of ' + str(ts.best_solution.value) + '.')
+    print(str(ts.best_solution.calculate_real_value()) + ' electoral votes were collected.')
     ts.best_solution.print()
+    print()
+
+
+def run_simulated_annealing(repeats, initial_cadence, critical_event):
+    print('Running Simulated Annealing with ' + str(repeats) + ' repeats...')
+    print()
+
+    sa = TabuSearch(states, repeats, initial_cadence, critical_event, inc_support, dec_support)
+    sa.run()
+    print('Found optimal route with value of ' + str(sa.best_solution.value) + '.')
+    print(str(sa.best_solution.calculate_real_value()) + ' electoral votes were collected.')
+    sa.best_solution.print()
     print()
 
 
@@ -70,19 +98,30 @@ def benchmark():
 
 
 @click.command()
-@click.argument('action', type=click.Choice(['rs', 'ga', 'benchmark']))
+@click.argument('action', type=click.Choice(['rs', 'ga', 'ts', 'sa', 'benchmark']))
+# TODO: Zamienić repeats na czas pracy
 @click.option('--repeats', default=10, type=int)
 @click.option('--population_size', default=20, type=int)
-def command(action, repeats, population_size):
+@click.option('--initial_cadence', default=20, type=int)
+@click.option('--critical_event', default=20, type=int)
+@click.option('--initial_temperature', default=1000, type=int)
+@click.option('--cooling_coefficient', default=0.99, type=int)
+def command(action, repeats, population_size, initial_cadence, critical_event, initial_temperature,
+            cooling_coefficient):
     load_states()
 
     if action == 'rs':
         run_random_search(repeats)
     elif action == 'ga':
         run_genetic_algorithm(repeats, population_size)
+    elif action == 'ts':
+        run_tabu_search(repeats, initial_cadence, critical_event)
+    elif action == 'sa':
+        run_simulated_annealing(repeats, initial_temperature, cooling_coefficient)
     elif action == 'benchmark':
         benchmark()
 
 
 if __name__ == '__main__':
     command()
+    # TODO: Miasta się powtarzają

@@ -9,7 +9,8 @@ class GeneticAlgorithm:
         self.population_size = population_size
         self.inc_support = inc_support
         self.dec_support = dec_support
-        self.best_solution = None
+        self.best_solution = self.Solution(self.inc_support, self.dec_support)
+        self.best_solution.calculate_value()
 
     class Solution(Route):
         def __init__(self, inc_support, dec_support):
@@ -54,10 +55,6 @@ class GeneticAlgorithm:
             self.states[index_b], self.states[index_a] = self.states[index_a], self.states[index_b]
 
     def run(self):
-        zero_solution = self.Solution(self.inc_support, self.dec_support)
-        zero_solution.calculate_value()
-        self.best_solution = zero_solution
-
         # Generate random population
         population = []
         for i in range(self.population_size):

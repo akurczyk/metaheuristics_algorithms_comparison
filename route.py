@@ -64,6 +64,7 @@ class Route:
         self.value = value
 
     def calculate_real_value(self):
+        # TODO: Sprawdzić jak to się liczy
         def dec_support(states_supports, time, excluded_state=None):
             for state in states_supports:
                 if state != excluded_state:
@@ -88,4 +89,4 @@ class Route:
         for state in states_supports:
             value += math.floor(states_supports[state] * state.electoral_votes)
 
-        self.value = value
+        return value
