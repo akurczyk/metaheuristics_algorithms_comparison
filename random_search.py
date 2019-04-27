@@ -7,7 +7,8 @@ class RandomSearch:
         self.no_of_iterations = no_of_iterations
         self.inc_support = inc_support
         self.dec_support = dec_support
-        self.best_solution = None
+        self.best_solution = Route(inc_support, dec_support)
+        self.best_solution.calculate_value()
 
     def run(self):
         for i in range(self.no_of_iterations):

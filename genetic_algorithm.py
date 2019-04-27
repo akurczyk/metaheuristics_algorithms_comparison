@@ -32,13 +32,13 @@ class GeneticAlgorithm:
 
             for i in range(len(parent_a)):
                 if i < begin or i >= end:
-                    if child_a[i] in child_a[begin:end]:
+                    while child_a[i] in child_a[begin:end]:
                         pos = child_a[begin:end].index(child_a[i]) + begin
                         child_a[i] = child_b[pos]
 
             for i in range(len(parent_a)):
                 if i < begin or i >= end:
-                    if child_b[i] in child_b[begin:end]:
+                    while child_b[i] in child_b[begin:end]:
                         pos = child_b[begin:end].index(child_b[i]) + begin
                         child_b[i] = child_a[pos]
 

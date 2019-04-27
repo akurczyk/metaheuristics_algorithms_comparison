@@ -17,6 +17,12 @@ class State:
     def __str__(self):
         return self.name + '; ' + self.capital + '; ' + str(self.electoral_votes) + '; ' + str(self.coordinates)
 
+    def __eq__(self, rhs):
+        return rhs is not None and rhs.name == self.name
+
+    def __hash__(self):
+        return hash(self.name)
+
     @staticmethod
     def print_states(states):
         table = PrettyTable(['Name', 'Capital', 'Electoral votes', 'Latitude', 'Longitude'], header_style='upper')

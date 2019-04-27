@@ -1,5 +1,5 @@
 from route import Route
-import random
+import copy
 
 
 class TabuSearch:
@@ -56,21 +56,27 @@ class TabuSearch:
         self.best_solution = solution
 
         for i in range(self.no_of_iterations):
-            # Choice and swap two states
-            while True:
-                state_a = random.choice(self.states)
-                state_b = random.choice(self.states)
+            # Choice best move regarding the tabu list
+            tmp_best_solution = self.Solution(self.inc_support, self.dec_support)
+            best_i, best_j = None, None
 
-                if self.is_swap_legal(state_a, state_b):
-                    break
+            for i in self.states:
+                for j in self.states:
+                    if self.is_swap_legal(i, j):
+                        tmp_solution = copy.deepcopy(solution)
+                        tmp_solution.swap(i, j)
+                        tmp_solution.calculate_value()
+                        if tmp_solution.value > tmp_best_solution.value:
+                            tmp_best_solution = tmp_solution
+                            best_i, best_j = i, j
 
-            solution.swap(state_a, state_b)
-            self.tabu_list.append(self.TabuEntry(state_a, state_b, self.initial_cadence))
+            solution = tmp_best_solution
+            self.tabu_list.append(self.TabuEntry(best_i, best_j, self.initial_cadence))
 
             # Evaluate route value and save it as best route if it is more valuable
             solution.calculate_value()
             if solution.value > self.best_solution.value:
-                self.best_solution = solution
+                self.best_solution = copy.copy(solution)
             else:
                 self.critical_event_counter += 1
 
