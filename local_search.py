@@ -1,11 +1,12 @@
 from route import Route
 import copy
+import datetime
 
 
 class LocalSearch:
-    def __init__(self, states, no_of_iterations, inc_support, dec_support):
+    def __init__(self, states, seconds, inc_support, dec_support):
         self.states = states
-        self.no_of_iterations = no_of_iterations
+        self.seconds = seconds
         self.inc_support = inc_support
         self.dec_support = dec_support
         self.best_solution = self.Solution(self.inc_support, self.dec_support)
@@ -28,7 +29,8 @@ class LocalSearch:
         # Save this route as best route
         self.best_solution = solution
 
-        for i in range(self.no_of_iterations):
+        finish = datetime.datetime.now() + datetime.timedelta(seconds=self.seconds)
+        while datetime.datetime.now() < finish:
             # Choice best move regarding the tabu list
             tmp_best_solution = self.Solution(self.inc_support, self.dec_support)
 

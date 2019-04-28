@@ -1,12 +1,15 @@
 from route import Route
 import random
+import datetime
 
 
 class GeneticAlgorithm:
-    def __init__(self, states, no_of_iterations, population_size, inc_support, dec_support):
+    def __init__(self, states, seconds, population_size, mutate, crossover, inc_support, dec_support):
         self.states = states
-        self.no_of_iterations = no_of_iterations
+        self.seconds = seconds
         self.population_size = population_size
+        self.mutate = mutate
+        self.crossover = crossover
         self.inc_support = inc_support
         self.dec_support = dec_support
         self.best_solution = self.Solution(self.inc_support, self.dec_support)
@@ -17,42 +20,59 @@ class GeneticAlgorithm:
             super().__init__(inc_support, dec_support)
 
         @staticmethod
-        def crossover(solution_a, solution_b):
-            parent_a = solution_a.states
-            parent_b = solution_b.states
+        def crossover(solution_a, solution_b, kind):
+            if kind == 'pmx':
+                parent_a = solution_a.states
+                parent_b = solution_b.states
 
-            random_a = random.randint(0, len(parent_a))
-            random_b = random.randint(0, len(parent_a))
+                random_a = random.randint(0, len(parent_a))
+                random_b = random.randint(0, len(parent_a))
 
-            begin = min(random_a, random_b)
-            end = max(random_a, random_b)
+                begin = min(random_a, random_b)
+                end = max(random_a, random_b)
 
-            child_a = parent_a[:begin] + parent_b[begin:end] + parent_a[end:]
-            child_b = parent_b[:begin] + parent_a[begin:end] + parent_b[end:]
+                child_a = parent_a[:begin] + parent_b[begin:end] + parent_a[end:]
+                child_b = parent_b[:begin] + parent_a[begin:end] + parent_b[end:]
 
-            for i in range(len(parent_a)):
-                if i < begin or i >= end:
-                    while child_a[i] in child_a[begin:end]:
-                        pos = child_a[begin:end].index(child_a[i]) + begin
-                        child_a[i] = child_b[pos]
+                for i in range(len(parent_a)):
+                    if i < begin or i >= end:
+                        while child_a[i] in child_a[begin:end]:
+                            pos = child_a[begin:end].index(child_a[i]) + begin
+                            child_a[i] = child_b[pos]
 
-            for i in range(len(parent_a)):
-                if i < begin or i >= end:
-                    while child_b[i] in child_b[begin:end]:
-                        pos = child_b[begin:end].index(child_b[i]) + begin
-                        child_b[i] = child_a[pos]
+                for i in range(len(parent_a)):
+                    if i < begin or i >= end:
+                        while child_b[i] in child_b[begin:end]:
+                            pos = child_b[begin:end].index(child_b[i]) + begin
+                            child_b[i] = child_a[pos]
 
-            solution_c = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
-            solution_c.states = child_a
+                solution_c = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
+                solution_c.states = child_a
 
-            solution_d = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
-            solution_d.states = child_b
+                solution_d = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
+                solution_d.states = child_b
 
-            return solution_c, solution_d
+                return solution_c, solution_d
 
-        def mutate(self):
+            elif kind == 'ox':
+                # TODO: https://stackoverflow.com/questions/26518393/order-crossover-ox-genetic-algorithm/26521576
+
+        def mutate(self, kind):
             index_a, index_b = tuple(random.sample(range(len(self.states)), 2))
-            self.states[index_b], self.states[index_a] = self.states[index_a], self.states[index_b]
+
+            if kind == 'transposition':
+                self.states[index_b], self.states[index_a] = self.states[index_a], self.states[index_b]
+
+            elif kind == 'insertion':
+                self.states = self.states[:index_a]\
+                              + self.states[index_a+1:index_b]\
+                              + [self.states[index_a]]\
+                              + self.states[index_b:]
+
+            elif kind == 'inversion':
+                self.states = self.states[:index_a]\
+                              + self.states[index_a:index_b][::-1]\
+                              + self.states[index_b:]
 
     def run(self):
         # Generate random population
@@ -64,7 +84,8 @@ class GeneticAlgorithm:
 
             population.append(solution)
 
-        for i in range(self.no_of_iterations):
+        finish = datetime.datetime.now() + datetime.timedelta(seconds=self.seconds)
+        while datetime.datetime.now() < finish:
             # Choice best solutions
             def my_sort(solution):
                 return -solution.value

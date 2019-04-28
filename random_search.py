@@ -1,17 +1,19 @@
 from route import Route
+import datetime
 
 
 class RandomSearch:
-    def __init__(self, states, no_of_iterations, inc_support, dec_support):
+    def __init__(self, states, seconds, inc_support, dec_support):
         self.states = states
-        self.no_of_iterations = no_of_iterations
+        self.seconds = seconds
         self.inc_support = inc_support
         self.dec_support = dec_support
         self.best_solution = Route(inc_support, dec_support)
         self.best_solution.calculate_value()
 
     def run(self):
-        for i in range(self.no_of_iterations):
+        finish = datetime.datetime.now() + datetime.timedelta(seconds=self.seconds)
+        while datetime.datetime.now() < finish:
             route = Route(self.inc_support, self.dec_support)
             route.generate_random(self.states)
             route.calculate_value()
