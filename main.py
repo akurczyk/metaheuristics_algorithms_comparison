@@ -91,8 +91,8 @@ def print_csv(*args):
 
 
 def benchmark():
-    REPEATS = 5
-    SECONDS = [150, 300, 600]
+    REPEATS = 2
+    SECONDS = [60, 300, 1200]
 
     for seconds in SECONDS:
         v = 0
