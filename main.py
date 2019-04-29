@@ -61,11 +61,11 @@ def run_tabu_search(seconds, initial_cadence, critical_event):
     print()
 
 
-def run_genetic_algorithm(seconds, population_size):
+def run_genetic_algorithm(seconds, population_size, crossover, mutate):
     print('Running Genetic Algorithm for ' + str(seconds) + ' seconds...')
     print()
 
-    ga = GeneticAlgorithm(states, seconds, population_size, inc_support, dec_support)
+    ga = GeneticAlgorithm(states, seconds, population_size, crossover, mutate, inc_support, dec_support)
     ga.run()
     print('Found optimal route with value of ' + str(ga.best_solution.value) + '.')
     print(str(ga.best_solution.calculate_real_value()) + ' electoral votes were collected.')
@@ -91,9 +91,10 @@ def print_csv(*args):
 
 
 def benchmark():
-    REPEATS = 1
+    REPEATS = 5
+    SECONDS = [150, 300, 600]
 
-    for seconds in [3, 6, 12]:
+    for seconds in SECONDS:
         v = 0
         time_s = datetime.now()
         for k in range(REPEATS):
@@ -106,7 +107,7 @@ def benchmark():
                   str(seconds), '-',
                   str(v/REPEATS), str(tt/REPEATS))
 
-    for seconds in [3, 6, 12]:
+    for seconds in SECONDS:
         v = 0
         time_s = datetime.now()
         for k in range(REPEATS):
@@ -119,7 +120,7 @@ def benchmark():
                   str(seconds), '-',
                   str(v/REPEATS), str(tt/REPEATS))
 
-    for seconds in [3, 6, 12]:
+    for seconds in SECONDS:
         for initial_cadence in [10, 25, 50]:
             for critical_event in [10, 25, 50]:
                 v = 0
@@ -134,19 +135,22 @@ def benchmark():
                           str(seconds), str(initial_cadence), str(critical_event),
                           str(v/REPEATS), str(tt/REPEATS))
 
-    for seconds in [3, 6, 12]:
-        for population_size in [10, 25, 50]:
-            v = 0
-            time_s = datetime.now()
-            for k in range(REPEATS):
-                ga = GeneticAlgorithm(states, seconds, population_size, inc_support, dec_support)
-                ga.run()
-                v += ga.best_solution.value
-            time_e = datetime.now()
-            tt = (time_e - time_s).total_seconds()
-            print_csv('Genetic Algorithm',
-                      str(seconds), str(population_size),
-                      str(v/REPEATS), str(tt/REPEATS))
+    for crossover in ['pmx', 'ox']:
+        for mutate in ['transposition', 'insertion', 'inversion']:
+            for seconds in SECONDS:
+                for population_size in [10, 25, 50]:
+                    v = 0
+                    time_s = datetime.now()
+                    for k in range(REPEATS):
+                        ga = GeneticAlgorithm(states, seconds, population_size, crossover, mutate,
+                                              inc_support, dec_support)
+                        ga.run()
+                        v += ga.best_solution.value
+                    time_e = datetime.now()
+                    tt = (time_e - time_s).total_seconds()
+                    print_csv('Genetic Algorithm ' + crossover + ' ' + mutate,
+                              str(seconds), str(population_size),
+                              str(v/REPEATS), str(tt/REPEATS))
 
     for initial_temperature in [100, 500, 1000]:
         for cooling_coefficient in [0.9, 0.99, 0.999]:
@@ -170,13 +174,15 @@ def benchmark():
 @click.command()
 @click.argument('action', type=click.Choice(['rs', 'ls', 'ts', 'ga', 'sa', 'benchmark']))
 @click.option('--seconds', default=20, type=int)
+@click.option('--crossover', default='pmx', type=click.Choice(['pmx', 'ox']))
+@click.option('--mutate', default='transposition', type=click.Choice(['transposition', 'insertion', 'inversion']))
 @click.option('--population_size', default=20, type=int)
 @click.option('--initial_cadence', default=20, type=int)
 @click.option('--critical_event', default=20, type=int)
 @click.option('--initial_temperature', default=1000, type=int)
 @click.option('--cooling_coefficient', default=0.999, type=float)
 @click.option('--minimal_temperature', default=1, type=int)
-def command(action, seconds, population_size, initial_cadence, critical_event, initial_temperature,
+def command(action, seconds, crossover, mutate, population_size, initial_cadence, critical_event, initial_temperature,
             cooling_coefficient, minimal_temperature):
     load_states()
 
@@ -187,7 +193,7 @@ def command(action, seconds, population_size, initial_cadence, critical_event, i
     elif action == 'ts':
         run_tabu_search(seconds, initial_cadence, critical_event)
     elif action == 'ga':
-        run_genetic_algorithm(seconds, population_size)
+        run_genetic_algorithm(seconds, population_size, crossover, mutate)
     elif action == 'sa':
         run_simulated_annealing(initial_temperature, cooling_coefficient, minimal_temperature)
     elif action == 'benchmark':

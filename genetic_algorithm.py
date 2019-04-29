@@ -4,12 +4,12 @@ import datetime
 
 
 class GeneticAlgorithm:
-    def __init__(self, states, seconds, population_size, mutate, crossover, inc_support, dec_support):
+    def __init__(self, states, seconds, population_size, crossover, mutate, inc_support, dec_support):
         self.states = states
         self.seconds = seconds
         self.population_size = population_size
-        self.mutate = mutate
         self.crossover = crossover
+        self.mutate = mutate
         self.inc_support = inc_support
         self.dec_support = dec_support
         self.best_solution = self.Solution(self.inc_support, self.dec_support)
@@ -21,16 +21,20 @@ class GeneticAlgorithm:
 
         @staticmethod
         def crossover(solution_a, solution_b, kind):
+            parent_a = solution_a.states
+            parent_b = solution_b.states
+
+            random_a = random.randint(0, len(parent_a))
+            random_b = random.randint(0, len(parent_a))
+
+            begin = min(random_a, random_b)
+            end = max(random_a, random_b)
+
+            child_a = []
+            child_b = []
+
+            # PMX
             if kind == 'pmx':
-                parent_a = solution_a.states
-                parent_b = solution_b.states
-
-                random_a = random.randint(0, len(parent_a))
-                random_b = random.randint(0, len(parent_a))
-
-                begin = min(random_a, random_b)
-                end = max(random_a, random_b)
-
                 child_a = parent_a[:begin] + parent_b[begin:end] + parent_a[end:]
                 child_b = parent_b[:begin] + parent_a[begin:end] + parent_b[end:]
 
@@ -46,16 +50,23 @@ class GeneticAlgorithm:
                             pos = child_b[begin:end].index(child_b[i]) + begin
                             child_b[i] = child_a[pos]
 
-                solution_c = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
-                solution_c.states = child_a
-
-                solution_d = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
-                solution_d.states = child_b
-
-                return solution_c, solution_d
-
+            # OX
             elif kind == 'ox':
-                # TODO: https://stackoverflow.com/questions/26518393/order-crossover-ox-genetic-algorithm/26521576
+                child_a = [element for element in parent_b if element not in parent_a[begin:end]][:begin]\
+                          + parent_a[begin:end]\
+                          + [element for element in parent_b if element not in parent_a[begin:end]][begin:]
+
+                child_b = [element for element in parent_a if element not in parent_b[begin:end]][:begin]\
+                          + parent_b[begin:end]\
+                          + [element for element in parent_a if element not in parent_b[begin:end]][begin:]
+
+            solution_c = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
+            solution_c.states = child_a
+
+            solution_d = GeneticAlgorithm.Solution(solution_a.inc_support, solution_a.dec_support)
+            solution_d.states = child_b
+
+            return solution_c, solution_d
 
         def mutate(self, kind):
             index_a, index_b = tuple(random.sample(range(len(self.states)), 2))
@@ -106,11 +117,11 @@ class GeneticAlgorithm:
                 if parent_a == parent_b:
                     continue
 
-                child_a, child_b = self.Solution.crossover(parent_a, parent_b)
+                child_a, child_b = self.Solution.crossover(parent_a, parent_b, self.crossover)
 
                 # Mutate childes
-                child_a.mutate()
-                child_b.mutate()
+                child_a.mutate(self.mutate)
+                child_b.mutate(self.crossover)
 
                 # Calculate childes values
                 child_a.calculate_value()
