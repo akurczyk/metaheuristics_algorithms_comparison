@@ -70,6 +70,8 @@ class GeneticAlgorithm:
 
         def mutate(self, kind):
             index_a, index_b = tuple(random.sample(range(len(self.states)), 2))
+            if index_b < index_a:
+                index_a, index_b = index_b, index_a
 
             if kind == 'transposition':
                 self.states[index_b], self.states[index_a] = self.states[index_a], self.states[index_b]

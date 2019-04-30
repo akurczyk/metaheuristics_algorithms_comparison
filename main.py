@@ -94,46 +94,46 @@ def benchmark():
     REPEATS = 2
     SECONDS = [60, 300, 1200]
 
-    for seconds in SECONDS:
-        v = 0
-        time_s = datetime.now()
-        for k in range(REPEATS):
-            rs = RandomSearch(states, seconds, inc_support, dec_support)
-            rs.run()
-            v += rs.best_solution.value
-        time_e = datetime.now()
-        tt = (time_e - time_s).total_seconds()
-        print_csv('Random Search',
-                  str(seconds), '-',
-                  str(v/REPEATS), str(tt/REPEATS))
+    #for seconds in SECONDS:
+    #    v = 0
+    #    time_s = datetime.now()
+    #    for k in range(REPEATS):
+    #        rs = RandomSearch(states, seconds, inc_support, dec_support)
+    #        rs.run()
+    #        v += rs.best_solution.value
+    #    time_e = datetime.now()
+    #    tt = (time_e - time_s).total_seconds()
+    #    print_csv('Random Search',
+    #              str(seconds), '-',
+    #              str(v/REPEATS), str(tt/REPEATS))
 
-    for seconds in SECONDS:
-        v = 0
-        time_s = datetime.now()
-        for k in range(REPEATS):
-            ls = LocalSearch(states, seconds, inc_support, dec_support)
-            ls.run()
-            v += ls.best_solution.value
-        time_e = datetime.now()
-        tt = (time_e - time_s).total_seconds()
-        print_csv('Local Search',
-                  str(seconds), '-',
-                  str(v/REPEATS), str(tt/REPEATS))
+    #for seconds in SECONDS:
+    #    v = 0
+    #    time_s = datetime.now()
+    #    for k in range(REPEATS):
+    #        ls = LocalSearch(states, seconds, inc_support, dec_support)
+    #        ls.run()
+    #        v += ls.best_solution.value
+    #    time_e = datetime.now()
+    #    tt = (time_e - time_s).total_seconds()
+    #    print_csv('Local Search',
+    #              str(seconds), '-',
+    #              str(v/REPEATS), str(tt/REPEATS))
 
-    for seconds in SECONDS:
-        for initial_cadence in [10, 25, 50]:
-            for critical_event in [10, 25, 50]:
-                v = 0
-                time_s = datetime.now()
-                for k in range(REPEATS):
-                    ts = TabuSearch(states, seconds, initial_cadence, critical_event, inc_support, dec_support)
-                    ts.run()
-                    v += ts.best_solution.value
-                time_e = datetime.now()
-                tt = (time_e - time_s).total_seconds()
-                print_csv('Tabu Search',
-                          str(seconds), str(initial_cadence), str(critical_event),
-                          str(v/REPEATS), str(tt/REPEATS))
+    #for seconds in SECONDS:
+    #    for initial_cadence in [10, 25, 50]:
+    #        for critical_event in [10, 25, 50]:
+    #            v = 0
+    #            time_s = datetime.now()
+    #            for k in range(REPEATS):
+    #                ts = TabuSearch(states, seconds, initial_cadence, critical_event, inc_support, dec_support)
+    #                ts.run()
+    #                v += ts.best_solution.value
+    #            time_e = datetime.now()
+    #            tt = (time_e - time_s).total_seconds()
+    #            print_csv('Tabu Search',
+    #                      str(seconds), str(initial_cadence), str(critical_event),
+    #                      str(v/REPEATS), str(tt/REPEATS))
 
     for crossover in ['pmx', 'ox']:
         for mutate in ['transposition', 'insertion', 'inversion']:
@@ -153,7 +153,7 @@ def benchmark():
                               str(v/REPEATS), str(tt/REPEATS))
 
     for initial_temperature in [100, 500, 1000]:
-        for cooling_coefficient in [0.9, 0.99, 0.999]:
+        for cooling_coefficient in [0.9, 0.99, 0.999, 0.9999]:
             for minimal_temperature in [initial_temperature * 0.25,
                                         initial_temperature * 0.5,
                                         initial_temperature * 0.75]:
