@@ -35,14 +35,14 @@ def generate_chart(title, filename, rows):
     plt.xlabel('Wynik')
     plt.ylabel('Parametry')
     plt.yticks(index, labels)
-    plt.xlim(200, 400)
+    plt.xlim(0, 400)
     plt.title(title)
 
     plt.savefig(filename)
 
 
 if __name__ == '__main__':
-    for no_of_cities in [51]:
+    for no_of_cities in [25, 51]:
         data = import_data(f'results/{no_of_cities}.csv')
         for chart_name in data:
             generate_chart(
