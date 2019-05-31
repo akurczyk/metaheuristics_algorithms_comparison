@@ -37,6 +37,26 @@ def generate_chart(title, filename, rows):
     plt.yticks(index, labels)
     plt.xlim(0, 400)
     plt.title(title)
+    plt.subplots_adjust(left=0.25)
+
+    plt.savefig(filename)
+
+
+def generate_time_chart(title, filename, rows):
+    labels = [row[0] for row in rows]
+    results = [row[2] for row in rows]
+    index = np.arange(len(labels))
+
+    width = 11.69-1.97
+    height = (16.53-1.97)-0.39 if len(rows) > 20 else ((16.53-1.97)/2)-0.39
+
+    plt.figure(figsize=(width, height), dpi=300)
+    plt.barh(index, results)
+    plt.xlabel('Czas pracy (w sekundach)')
+    plt.ylabel('Parametry')
+    plt.yticks(index, labels)
+    plt.title(title)
+    plt.subplots_adjust(left=0.25)
 
     plt.savefig(filename)
 
@@ -50,3 +70,10 @@ if __name__ == '__main__':
                 f'results/charts/{chart_name} {no_of_cities}.png',
                 data[chart_name]
             )
+
+            if chart_name == 'Simulated Annealing':
+                generate_time_chart(
+                    f'{no_of_cities} miast: {chart_name}',
+                    f'results/charts/{chart_name} {no_of_cities} Time.png',
+                    data[chart_name]
+                )
