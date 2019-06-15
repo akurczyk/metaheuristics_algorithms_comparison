@@ -30,16 +30,34 @@ def generate_chart(title, filename, rows):
     width = 11.69-1.97
     height = (16.53-1.97)-0.39 if len(rows) > 20 else ((16.53-1.97)/2)-0.39
 
-    plt.figure(figsize=(width, height), dpi=300)
-    plt.barh(index, results)
-    plt.xlabel('Wynik')
-    plt.ylabel('Parametry')
-    plt.yticks(index, labels)
-    plt.xlim(0, 400)
-    plt.title(title)
-    plt.subplots_adjust(left=0.25)
+    if len(rows) > 20:
+        plt.figure(figsize=(width, height), dpi=150)
+        plt.barh(index, results)
+        plt.xlabel('Osiągnięty rezultat wyborczy (funkcja ciągła)')
+        if ' ' in rows[0][0][:-1]:
+            plt.ylabel('Parametry')
+        else:
+            plt.ylabel('Czas obliczeń (w sekundach)')
+        plt.yticks(index, labels)
+        plt.xlim(0, 400)
+        plt.title(title)
+        plt.subplots_adjust(left=0.25)
 
-    plt.savefig(filename)
+        plt.savefig(filename)
+    else:
+        plt.figure(figsize=(width, height), dpi=150)
+        plt.bar(index, results)
+        plt.ylabel('Średni osiągnięty rezultat wyborczy (funkcja ciągła)')
+        if ' ' in rows[0][0][:-1]:
+            plt.xlabel('Parametry')
+        else:
+            plt.xlabel('Czas obliczeń (w sekundach)')
+        plt.xticks(index, labels, rotation='vertical')
+        plt.ylim(0, 400)
+        plt.title(title)
+        plt.subplots_adjust(bottom=0.25)
+
+        plt.savefig(filename)
 
 
 def generate_time_chart(title, filename, rows):
@@ -50,9 +68,9 @@ def generate_time_chart(title, filename, rows):
     width = 11.69-1.97
     height = (16.53-1.97)-0.39 if len(rows) > 20 else ((16.53-1.97)/2)-0.39
 
-    plt.figure(figsize=(width, height), dpi=300)
+    plt.figure(figsize=(width, height), dpi=150)
     plt.barh(index, results)
-    plt.xlabel('Czas pracy (w sekundach)')
+    plt.xlabel('Czas obliczeń (w sekundach)')
     plt.ylabel('Parametry')
     plt.yticks(index, labels)
     plt.title(title)

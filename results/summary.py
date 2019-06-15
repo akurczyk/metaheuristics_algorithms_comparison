@@ -90,14 +90,14 @@ def generate_chart(title, filename, rows):
     height = (16.53-1.97)-0.39 if len(rows) > 20 else ((16.53-1.97)/2)-0.39
 
     plt.figure(figsize=(width, height), dpi=300)
-    plt.barh(index, results_best, color='#2AA5F7')
-    plt.barh(index, results_worst, color='#1E78B4')
-    plt.xlabel('Wynik')
-    plt.ylabel('Parametry')
-    plt.yticks(index, labels)
-    plt.xlim(0, 400)
+    plt.bar(index, results_best, color='#2AA5F7')
+    plt.bar(index, results_worst, color='#1E78B4')
+    plt.ylabel('Średni osiągnięty rezultat wyborczy (funkcja ciągła)')
+    plt.xlabel('Parametry')
+    plt.xticks(index, labels, rotation='vertical')
+    plt.ylim(0, 400)
     plt.title(title)
-    plt.subplots_adjust(left=0.25)
+    plt.subplots_adjust(bottom=0.33)
 
     plt.savefig(filename)
 
